@@ -11,11 +11,37 @@ end
 
 %% take out NaN's and replace them with neighboring values
 % interpolate to replace NaN's
+% this only works if the first and last values aren't nan's
+if isnan(posx(1))
+    posx(1) = posx(find(isfinite(posx),1,'first'));
+end
+if isnan(posy(1))
+    posy(1) = posy(find(isfinite(posy),1,'first'));
+end
+if isnan(posx2(1))
+    posx2(1) = posx2(find(isfinite(posx2),1,'first'));
+end
+if isnan(posy2(1))
+    posy2(1) = posy2(find(isfinite(posy2),1,'first'));
+end
 
-ind = isnan(posx);  posx(~isnan(posx)) = interp1(post(~ind),posx(~ind),post(ind),'linear');
-posy(~isnan(posy)) = interp1(post(~isnan(posy)),posy(~isnan(posy)),post(isnan(posy)),'linear');
-posx2(~isnan(posx2)) = interp1(post(~isnan(posx2)),posx2(~isnan(posx2)),post(isnan(posx2)),'linear');
-posy2(~isnan(posy2)) = interp1(post(~isnan(posy2)),posy2(~isnan(posy2)),post(isnan(posy2)),'linear');
+if isnan(posx(end))
+    posx(end) = posx(find(isfinite(posx),1,'last'));
+end
+if isnan(posy(end))
+    posy(end) = posy(find(isfinite(posy),1,'last'));
+end
+if isnan(posx2(end))
+    posx2(end) = posx2(find(isfinite(posx2),1,'last'));
+end
+if isnan(posy2(end))
+    posy2(end) = posy2(find(isfinite(posy2),1,'last'));
+end
+
+posx(isnan(posx)) = interp1(post(~isnan(posx)),posx(~isnan(posx)),post(isnan(posx)),'linear');
+posy(isnan(posy)) = interp1(post(~isnan(posy)),posy(~isnan(posy)),post(isnan(posy)),'linear');
+posx2(isnan(posx2)) = interp1(post(~isnan(posx2)),posx2(~isnan(posx2)),post(isnan(posx2)),'linear');
+posy2(isnan(posy2)) = interp1(post(~isnan(posy2)),posy2(~isnan(posy2)),post(isnan(posy2)),'linear');
 
 %% make sure that the length of the vectors are correct given the eeg recording
 maxTime = numel(filt_eeg)/sampleRate*50;
