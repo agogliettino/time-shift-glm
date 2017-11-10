@@ -107,8 +107,6 @@ param = parameters{end};
 %%%%%%%% DO THE TIME SHIFT PROCEDURE %%%%%%%
 %depending on the variables in the model, we have to put a column vector of
 %ones before the first column in the A matrix
-%sort variables because the A matrix is in the 1-4 variable order
-variables = sort(variables);
 
 if variables(1) == 1
     A{1} = [ones(length(spiketrain),1) A{1}];
