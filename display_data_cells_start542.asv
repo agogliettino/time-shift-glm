@@ -1,9 +1,12 @@
 
-
-
 %% load data
 
 load('cellData_start542.mat'); %loads the data into the workspace
+
+%load the cells of interest
+load('encodingCells.mat');
+%get rid of the crappy cells
+encodingCells = encodingCells(encodingCells >= 542);
 
 %find the indices of the significant p values for every shift
 
@@ -99,8 +102,7 @@ hdSpdMod = cell(numel(encodingCells),2); %2 3
 posSpdMod = cell(numel(encodingCells),2); %1 3
 posHdSpdMod = cell(numel(encodingCells),2); %1 2 3
 
-%create arrays for the multiple models (to appease matlab)
-
+%create arrays for the multiple models 
 ph = [1 2];
 hs = [2 3];
 ps = [1 3];
@@ -108,31 +110,108 @@ phs = [1 2 3];
 
 for i = 1:numel(encodingCells)
     for j = 1:numel(variables_allFilt{i,2})
-        if variables_allFilt{i,2} == 4
-            variables_allFilt{i,2} = []; %gets rid of the theta model
+        if variables_allFilt{i,2}(j) == 4
+            variables_allFilt{i,2}(j) = []; %gets rid of the theta model because we dont want it
+            SigAllVarShiftsFilt{i,2}(j) = []; %gets rid of the theta shift, because we also don't want it
         end
     end
-    if variables_allFilt{i,2} == 1
-        posMod{i,1} = variables_allFilt{i,1};
-        posMod{i,2} = SigAllVarShiftsFilt{i,2};
-    elseif variables_allFilt{i,2} == 2
-        hdMod{i,1} = variables_allFilt{i,1};
-        hdMod{i,2} = variables_allFilt{i,2};
-    elseif variables_allFilt{i,2} == 3
-        spdMod{i,1} = variables_allFilt{i,1};
-        spdMod{i,2} = variables_allFilt{i,2};
-    elseif variables_allFilt{i,2} == ph
-        posHdMod{i,1} = variables_allFilt{i,1};
-        posHdMod{i,2} = variables_allFilt{i,2};
-    elseif variables_allFilt{i,2} == hs;
-        hdSpdMod{i,1} = variables_allFilt{i,1};
-        hdSpdMod{i,2} = variables_allFilt{i,2};
-    elseif variables_allFilt{i,2} == ps;
-        posSpdMod{i,1} = variables_allFilt{i,1};
-        posSpdMod{i,2} = variables_allFilt{i,2};
-    elseif variables_allFilt{
+    if numel(variables_allFilt{i,2}) == 1 %if there is one variable in the model, do the next line
+        if variables_allFilt{i,2} == 1
+            posMod{i,1} = variables_allFilt{i,1};
+            posMod{i,2} = SigAllVarShiftsFilt{i,2};
+        elseif variables_allFilt{i,2} == 2
+            hdMod{i,1} = variables_allFilt{i,1};
+            hdMod{i,2} = SigAllVarShiftsFilt{i,2};
+        elseif variables_allFilt{i,2} == 3
+            spdMod{i,1} = variables_allFilt{i,1};
+            spdMod{i,2} = SigAllVarShiftsFilt{i,2};
+        end
+    elseif numel(variables_allFilt{i,2}) == 2 %if there are two variables in the model, run these lines
+        if variables_allFilt{i,2} == ph
+            posHdMod{i,1} = variables_allFilt{i,1};
+            posHdMod{i,2} = SigAllVarShiftsFilt{i,2};
+        elseif variables_allFilt{i,2} == hs
+            hdSpdMod{i,1} = variables_allFilt{i,1};
+            hdSpdMod{i,2} = SigAllVarShiftsFilt{i,2};
+        elseif variables_allFilt{i,2} == ps
+            posSpdMod{i,1} = variables_allFilt{i,1};
+            posSpdMod{i,2} = SigAllVarShiftsFilt{i,2};
+        end
+    elseif numel(variables_allFilt{i,2}) == 3 %if there are three variables in the model, run these
+        if variables_allFilt{i,2} == phs 
+            posHdSpdMod{i,2} = variables_allFilt{i,1};
+            posHdSpdMod{i,2} = SigAllVarShiftsFilt{i,2};
+        end
     end
 end
-        
+
+
+%% get rid of the empty cells
+
+%convert from cell array to matrix
+
+posMod = cell2mat(posMod);
+hdMod = cell2mat(hdMod);
+spdMod = cell2mat(spdMod);
+posHdMod = cell2mat(posHdMod);
+hdSpdMod = cell2mat(hdSpdMod);
+posSpdMod = cell2mat(posSpdMod);
+posHdSpdMod = cell2mat(posHdSpdMod);
+
+%%display the data
+
+%first the position
+figure(2);
+bar(posMod(:,1),posMod(:,2));
+
+%next, HD
+figure(3);
+bar(hdMod(:,1),hdMod(:,2));
+
+%next, spd
+figure(4);
+bar(spdMod(:,1),spdMod(:,2));
+
+
+%next, posHd
+figure(5);
+%pos first
+bar(posHdMod(:,1),posHdMod(:,2),'FaceColor','m');
+hold on
+%next, HD
+bar(posHdMod(:,1),posHdMod(:,3),'FaceColor','g');
+legend('Pos','HD');
+hold off
+
+%next, hdPsd
+figure(6);
+%hd firt
+bar(hdSpdMod(:,1),hdSpdMod(:,2),'FaceColor','r');
+hold on
+%next, the Spd
+bar(hdSpdMod(:,1),hdSpdMod(:,3),'FaceColor','c');
+legend('HD','Spd');
+hold off
+
+%next, PosSpd
+figure(7);
+%first the pos
+bar(posSpdMod(:,1),posSpdMod(:,2),'FaceColor','k');
+hold on
+%next the spd
+bar(posSpdMod(:,1),posSpdMod(:,3),'FaceColor','b');
+legend('Pos','Spd');
+hold off
+
+%last, the posHdSpd
+%first the 
+
+
+
+
+
+
+
+
         
     
