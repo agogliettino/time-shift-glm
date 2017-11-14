@@ -165,6 +165,7 @@ figure(2);
 bar(posMod(:,1),posMod(:,2));
 xlabel('Cell Number');
 ylabel('Shift in A Mat (Max LLH)');
+legend('Pos');
 
 
 %next, HD
@@ -172,12 +173,14 @@ figure(3);
 bar(hdMod(:,1),hdMod(:,2));
 xlabel('Cell Number');
 ylabel('Shift in A Mat (Max LLH)');
+legend('HD');
 
 %next, spd
 figure(4);
 bar(spdMod(:,1),spdMod(:,2));
 xlabel('Cell Number');
 ylabel('Shift in A Mat (Max LLH)');
+legend('Spd');
 
 
 %next, posHd
