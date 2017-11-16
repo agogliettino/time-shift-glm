@@ -149,7 +149,7 @@ end
 
 %% get rid of the empty cells
 
-%convert from cell array to matrix to get rid of empty cells
+%convert from cell array to matrix
 
 posMod = cell2mat(posMod);
 hdMod = cell2mat(hdMod);
