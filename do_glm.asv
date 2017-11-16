@@ -26,15 +26,11 @@ variables_all = cell(numCell,1);
 AllVarShifts = cell(numCell,1);
 AllPShifts = cell(numCell,1);
 AllParamVar = cell(numCell,1);
-AllVar_TotalLLH_1 = cell(numCell,1);
-AllForwardPval = cell(numCell,1);
-AllForwardFinal_Pval = cell(numCell,1);
-AllvarAllmodelFits = cell(numCell,1);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% do the for loop
 encodingCells = encodingCells(encodingCells >= 542);
-for n = encodingCells'   
+for n = encodingCells'
     tic
     %%%%%%%%%%%%%%%%%%%%%%%% LOAD ALL FILES%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %find directory
@@ -59,21 +55,15 @@ for n = encodingCells'
 
     %%%%%%%%%%%%%%%%%%%%%%%% COLLECT PARAMETERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    [param, variables,VarShifts,P_ShiftVar,paramVar,VarTotal_LLH_1,ForwardPval,ForwardFinal_Pval,varAllModelFits] = create_glm(posfile,spikefile,filt_eeg,sampleRate,BoxSize{n});
+    [param, variables,VarShifts,P_ShiftVar,paramVar] = create_glm(posfile,spikefile,filt_eeg,sampleRate,BoxSize{n});
     param_all{n} = param;
     variables_all{n} = variables;
     AllVarShifts{n} = VarShifts;
     AllPShifts{n} = P_ShiftVar;
     AllParamVar{n} = paramVar;
-    AllVar_TotalLLH_1{n} = VarTotal_LLH_1;
-    AllForwardPval{n} = ForwardPval;
-    AllForwardFinal_Pval{n} = ForwardFinal_Pval;
-    AllvarAllmodelFits{n} = varAllModelFits;
     
     toc
-    save('cellData_start542.mat','param_all','variables_all','AllVarShifts','AllPShifts','AllParamVar','AllVar_TotalLLH_1','AllForwardFinal_Pval','AllvarAllmodelFits');
-        
-        
+    save(['time_shift_output_cell',num2str(n)],'param_all','variables_all','AllVarShifts','AllPShifts','AllParamVar');
     
 end
 
