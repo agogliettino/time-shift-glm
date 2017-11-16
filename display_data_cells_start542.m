@@ -102,7 +102,8 @@ hdSpdMod = cell(numel(encodingCells),2); %2 3
 posSpdMod = cell(numel(encodingCells),2); %1 3
 posHdSpdMod = cell(numel(encodingCells),2); %1 2 3
 
-%create arrays for the multiple models 
+%create arrays for the multiple models - hardcoded, but dependent on how
+%the design matrix was created
 ph = [1 2];
 hs = [2 3];
 ps = [1 3];
@@ -148,7 +149,7 @@ end
 
 %% get rid of the empty cells
 
-%convert from cell array to matrix
+%convert from cell array to matrix to get rid of empty cells
 
 posMod = cell2mat(posMod);
 hdMod = cell2mat(hdMod);
