@@ -6,7 +6,7 @@ load('cellData_start542.mat'); %loads the data into the workspace
 %load the cells of interest
 load('encodingCells.mat');
 %get rid of the crappy cells
-encodingCells = encodingCells(encodingCells >= 542);
+encodingCells = encodingCells;
 
 %find the indices of the significant p values for every shift
 

@@ -33,7 +33,7 @@ AllvarAllmodelFits = cell(numCell,1);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% do the for loop
-encodingCells = encodingCells(encodingCells >= 542);
+encodingCells = encodingCells;
 for n = encodingCells'   
     tic
     %%%%%%%%%%%%%%%%%%%%%%%% LOAD ALL FILES%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
