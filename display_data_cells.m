@@ -235,6 +235,211 @@ hold off
 xlabel('Cell Number');
 ylabel('Shift in A Mat (Max LLH)');
 
+%% try to quantify the changes in each cell shift
+
+%first, we are to show across all cell types, the distribution of the shift
+%types for each variable
+
+%here, this is just a plot of all the single variables (Pos, HD, Spd)
+%pooled to represent the different shifts across the whole population of
+%cells
+
+figure(9);
+histogram(posCells(:,2),'FaceColor','b') % a plot for the position
+xlabel('Shift in Design Matrix');
+ylabel('Number of cells');
+legend('Pos (pooled models)');
+
+figure(10);
+histogram(hdCells(:,2),'FaceColor','c'); %plot for the HD
+xlabel('Shift in Design Matrix');
+ylabel('Number of cells');
+legend('HD (pooled models)');
+
+figure(11);
+histogram(spdCells(:,2),'FaceColor','r'); %plot for the spd
+xlabel('Shift in Design Matrix');
+ylabel('Number of cells');
+legend('Spd (pooled models)');
+
+%next, it is of interest to do the same, but for the specific models
+
+figure(12);
+histogram(posMod(:,2),'FaceColor','g'); %position only
+xlabel('Shift in Design Matrix');
+ylabel('Number of cells');
+legend('Pos Model Cells');
+meanShiftPos = mean(posMod(:,2)); %compute the mean shift
+sdShiftPos = std(posMod(:,2)); %compute the sd of the shift
+
+figure(13);
+histogram(hdMod(:,2),'FaceColor','k'); %hd only
+xlabel('Shift in Design Matrix');
+ylabel('Number of cells');
+legend('HD Model Cells');
+meanShiftHD = mean(hdMod(:,2));
+sdShiftHD = std(hdMod(:,2));
+
+figure(14);
+histogram(spdMod(:,2),'FaceColor','m'); %spd only
+xlabel('Shift in Design Matrix');
+ylabel('Number of cells');
+legend('Spd Model Cells');
+meanShiftSpd = mean(spdMod(:,2));
+sdShiftSpd = std(spdMod(:,2));
+
+figure(15);
+histogram(posHdMod(:,2),'FaceColor','b'); %pos HD
+xlabel('Shift in Design Matrix');
+ylabel('Number of cells');
+legend('Pos + HD Model Cells');
+meanShiftPosHD = mean(posHdMod(:,2));
+sdShiftPosHD = std(posHdMod(:,2));
+
+figure(16);
+histogram(hdSpdMod(:,2),'FaceColor','g'); %hd spd
+xlabel('Shift in Design Matrix');
+ylabel('Number of cells');
+legend('HD + Spd Model Cells');
+meanShiftHdSpd = mean(hdSpdMod(:,2));
+sdShiftHdSpd = std(hdSpdMod(:,2));
+
+
+figure(17);
+histogram(posSpdMod(:,2),'FaceColor','r'); %pos spd
+xlabel('Shift in Design Matrix');
+ylabel('Number of cells');
+legend('HD + Spd Model Cells');
+meanShiftPosSpd = mean(posSpdMod(:,2));
+sdShiftPosSpd = std(posSpdMod(:,2));
+
+figure(18);
+histogram(posHdSpdMod(:,2),'FaceColor','c'); %full model (pos, hd, spd)
+xlabel('Shift in Design Matrix');
+ylabel('Number of cells');
+legend('Pos + HD + Spd Model Cells');
+meanShiftPosHdSpd = mean(posHdSpdMod(:,2));
+sdShiftPosHdSpd = std(posHdSpdMod(:,2));
+
+%figure out how many cells have shifts in opposing directions for each
+%model with >2 variables
+
+%look first in posHD
+
+%preallocate to save numbers
+OpShiftPosHd = [];
+
+for i = 1:length(posHdMod)
+    if posHdMod(i,2) > 0 && posHdMod(i,3) < 0 %basically, if there are opposite signs                                                                                   %for each variable, add the cell to the array
+        OpShiftPosHd(end+1) = posHdMod(i,1); 
+    elseif posHdMod(i,2) < 0 && posHdMod(i,3) > 0
+        OpShiftPosHd(end+1) = posHdMod(i,1); 
+    end
+end
+
+%last, count it up!
+NumOpPosHd = numel(OpShiftPosHd);
+
+%next, the HDspd
+
+%preallocate
+OpShiftHdSpd = [];
+
+for i = 1:length(hdSpdMod)
+    if hdSpdMod(i,2) > 0 && hdSpdMod(i,3) < 0
+        OpShiftHdSpd(end+1) = hdSpdMod(i,1);
+    elseif hdSpdMod(i,2) < 0 && hdSpdMod(i,3) > 0
+        OpShiftHdSpd(end+1) = hdSpdMod(i,1);
+    end
+end
+
+%count!
+numOpHdSpd = numel(OpShiftHdSpd);
+
+%next is the PosSpd model
+
+%preallocate
+OpShiftPosSpd = [];
+
+for i = 1:length(posSpdMod)
+    if posSpdMod(i,2) > 0 && posSpdMod(i,3) < 0
+        OpShiftPosSpd(end+1) = posSpdMod(i,1);
+    elseif posSpdMod(i,2) < 0 && posSpdMod(i,3) > 0
+        OpShiftPosSpd(end+1) = posSpdMod(i,1);
+    end
+end
+
+%count it up!!!
+numOpPosSpd = numel(OpShiftPosSpd);
+
+%last, the full model - need to test 1 2, 2 3, 1 3, twice
+%for the purposes of this analysis, we will only look for the presence of
+%two opposing shifts (ie two variables out of the three)
+
+%preallocate
+OpShiftPosHdSpd = [];
+
+for i = 1:length(posHdSpdMod)
+    if posHdSpdMod(i,2) > 0 && posHdSpdMod(i,3) < 0
+        OpShiftPosHdSpd(end+1) = posHdSpdMod(i,1); %1 2 front
+    elseif posHdSpdMod(i,2) < 0 && posHdSpdMod(i,3) > 0 
+        OpShiftPosHdSpd(end+1) = posHdSpdMod(i,1); %1 2 back
+    elseif posHdSpdMod(i,3) > 0 && posHdSpdMod(i,4) < 0
+        OpShiftPosHdSpd(end+1) = posHdSpdMod(i,1); %2 3 front
+    elseif posHdSpdMod(i,3) < 0 && posHdSpdMod(i,4) > 0 %2 3 back
+        OpShiftPosHdSpd(end+1) = posHdSpdMod(i,1);
+    elseif posHdSpdMod(i,2) > 0 && posHdSpdMod(i,4) < 0
+        OpShiftPosHdSpd(end+1) = posHdSpdMod(i,1); % 1 3 fron
+    elseif posHdSpdMod(i,2) < 0 && posHdSpdMod(i,4) > 0
+        OpShiftPosHdSpd(end+1) = posHdSpdMod(i,1); %1 3 back
+    end
+end
+
+%count!
+
+numOpPosHdSpd = numel(OpShiftPosHdSpd);
+
+%quantify the extent that speed and position have opposite shifts - we will
+%use a binomial test here
+%we will assume that the expected outcome will be no shift - using the
+%myBinomTest.m function from file exchange
+
+%first, we will do position - here we will do the pooled models
+
+[pPosPooled] = myBinomTest(numel(find(posCells(:,2)<0)),numel(posCells(:,2)),.5,'one');
+
+[pHDPooled] = myBinomTest(numel(find(hdCells(:,2)<0)),numel(hdCells(:,2)),.5,'one');
+
+[pSpdPooled] = myBinomTest(numel(find(spdCells(:,2)>0)),numel(spdCells(:,2)),.5,'one');
+
+
+
+
+
+
+
+
+
+        
+        
+        
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+
 
 
 
