@@ -71,7 +71,7 @@ for n = encodingCells'
     AllvarAllmodelFits{n} = varAllModelFits;
     
     toc
-    save('cellData_start542.mat','param_all','variables_all','AllVarShifts','AllPShifts','AllParamVar','AllVar_TotalLLH_1','AllForwardFinal_Pval','AllvarAllmodelFits');
+    save('cellData_11_16_17Run.mat','param_all','variables_all','AllVarShifts','AllPShifts','AllParamVar','AllVar_TotalLLH_1','AllForwardFinal_Pval','AllvarAllmodelFits');
         
         
     
