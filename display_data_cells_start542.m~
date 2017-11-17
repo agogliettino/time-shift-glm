@@ -401,24 +401,6 @@ numOpPosHdSpd = numel(OpShiftPosHdSpd);
 
 %quantify the extent that speed and position have opposite shifts - we will
 %use a binomial test here
-%we will assume that the expected outcome will be no shift - using the
-%myBinomTest.m function from file exchange
-
-%first, we will do position - here we will do the pooled models
-
-[pPosPooled] = myBinomTest(numel(find(posCells(:,2)<0)),numel(posCells(:,2)),.5,'one');
-
-[pHDPooled] = myBinomTest(numel(find(hdCells(:,2)<0)),numel(hdCells(:,2)),.5,'one');
-
-[pSpdPooled] = myBinomTest(numel(find(spdCells(:,2)>0)),numel(spdCells(:,2)),.5,'one');
-
-
-
-
-
-
-
-
 
         
         
