@@ -245,13 +245,13 @@ ylabel('Shift in A Mat (Max LLH)');
 %cells
 
 figure(9);
-histogram(posCells(:,2),'FaceColor','b','BinWidth',1) % a plot for the position
+histogram(posCells(:,2),'FaceColor','b') % a plot for the position
 xlabel('Shift in Design Matrix');
 ylabel('Number of cells');
 legend('Pos (pooled models)');
 
 figure(10);
-histogram(hdCells(:,2),'FaceColor','c','BinWidth',1); %plot for the HD
+histogram(hdCells(:,2),'FaceColor','c'); %plot for the HD
 xlabel('Shift in Design Matrix');
 ylabel('Number of cells');
 legend('HD (pooled models)');
@@ -309,7 +309,7 @@ hold on
 histogram(posSpdMod(:,3),'FaceColor','g','BinWidth',1); %Spd
 xlabel('Shift in Design Matrix');
 ylabel('Number of cells');
-legend('Pos Shift','Spd Shift');
+legend('HD Shift','Spd Shift');
 hold off
 
 
