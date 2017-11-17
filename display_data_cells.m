@@ -285,44 +285,71 @@ ylabel('Number of cells');
 legend('Spd Model Cells');
 
 figure(15);
+subplot(2,1,1)
 histogram(posHdMod(:,2),'FaceColor','b','BinWidth',1); %pos 
-hold on
+xlabel('Shift in Design Matrix');
+ylabel('Number of cells');
+legend('Pos Shifts');
+axis([-50 50 0 length(posHdMod(:,2))])
+subplot(2,1,2)
 histogram(posHdMod(:,3),'FaceColor','r','BinWidth',1); %HD
 xlabel('Shift in Design Matrix');
 ylabel('Number of cells');
-legend('Pos Shifts','HD Shifts');
-hold off
+legend('HD Shifts');
+axis([-50 50 0 length(posHdMod(:,3))])
+
+
 
 figure(16);
+subplot(2,1,1)
 histogram(hdSpdMod(:,2),'FaceColor','g','BinWidth',1); %hd 
-hold on
+xlabel('Shift in Design Matrix');
+ylabel('Number of cells');
+legend('HD Shift');
+axis([-50 50 0 length(hdSpdMod(:,2))])
+subplot(2,1,2)
 histogram(hdSpdMod(:,3),'FaceColor','b','BinWidth',1); %spd
 xlabel('Shift in Design Matrix');
 ylabel('Number of cells');
-legend('HD Shift','Spd Shift');
-hold off
+legend('Spd Shift');
+axis([-50 50 0 length(hdSpdMod(:,3))])
+
 
 
 figure(17);
+subplot(2,1,1)
 histogram(posSpdMod(:,2),'FaceColor','r','BinWidth',1); %pos 
-hold on
+xlabel('Shift in Design Matrix');
+ylabel('Number of cells');
+legend('Pos Shift');
+axis([-50 50 0 length(posSpdMod(:,2))])
+subplot(2,1,2)
 histogram(posSpdMod(:,3),'FaceColor','g','BinWidth',1); %Spd
 xlabel('Shift in Design Matrix');
 ylabel('Number of cells');
-legend('Pos Shift','Spd Shift');
-hold off
+legend('Spd Shift');
+axis([-50 50 0 length(posSpdMod(:,3))])
 
 
 figure(18);
+subplot(3,1,1)
 histogram(posHdSpdMod(:,2),'FaceColor','c','BinWidth',1); % position
-hold on
+xlabel('Shift in Design Matrix');
+ylabel('Number of cells');
+legend('Pos Shift');
+axis([-50 50 0 length(posHdSpdMod(:,2))])
+subplot(3,1,2)
 histogram(posHdSpdMod(:,3),'FaceColor','m','BinWidth',1); %HD
-hold on 
+xlabel('Shift in Design Matrix');
+ylabel('Number of cells');
+legend('HD Shift');
+axis([-50 50 0 length(posHdSpdMod(:,3))])
+subplot(3,1,3);
 histogram(posHdSpdMod(:,4),'FaceColor','g','BinWidth',1); %spd
 xlabel('Shift in Design Matrix');
 ylabel('Number of cells');
-legend('Pos Shift','HD Shift','Spd Shift');
-hold off
+legend('Spd Shift');
+axis([-50 50 0 length(posHdSpdMod(:,4))])
 
 %figure out how many cells have shifts in opposing directions for each
 %model with >2 variables
