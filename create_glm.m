@@ -1,4 +1,4 @@
-function [param,variables,VarShifts,P_ShiftVar,paramVar,VarTotal_LLH_1,ForwardPval,ForwardFinal_Pval,varAllModelFits] = create_glm(posfile,spikefile,filt_eeg,sampleRate,boxSize)
+function [param,tuning_curves,variables,VarShifts,P_ShiftVar,paramVar,VarTotal_LLH_1,ForwardPval,ForwardFinal_Pval,varAllModelFits,A,posgrid,hdgrid,speedgrid,thetagrid,posVec,hdVec,spdVec,thetaVec] = create_glm(posfile,spikefile,filt_eeg,sampleRate,boxSize)
 
 % load spike file
 load(spikefile)
@@ -14,9 +14,9 @@ fprintf('Making position spline\n');
 [posx,posy,posx2,posy2,post] = rescalePos(posfile,boxSize,filt_eeg,sampleRate);
 posx_c = nanmean([posx posx2],2); posy_c = nanmean([posy posy2],2); % compute average position
 
-bin_p = 10; s = 0.5;
+bin_p = 8; s = 0.5;
 posVec = linspace(0,boxSize,bin_p); posVec(1) = -0.01;
-[posgrid,~] = spline_2d(posx_c,posy_c,posVec,s);
+[posgrid,cpts_all] = spline_2d(posx_c,posy_c,posVec,s);
 A{1} = posgrid;
 
 %%%%%%%%% HEAD DIRECTION %%%%%%%%%
@@ -27,7 +27,7 @@ direction = atan2(posy2-posy,posx2-posx)+pi/2;
 direction(direction < 0) = direction(direction<0)+2*pi; % go from 0 to 2*pi, without any negative numbers
 
 
-bin_h = 15;
+bin_h = 10;
 hdVec = linspace(0,2*pi,bin_h+1); hdVec = hdVec(1:end-1);
 s = 0.5;
 [hdgrid] = spline_1d_circ(direction,hdVec,s);
@@ -51,7 +51,7 @@ speed = conv(speed,gausswin(5)/sum(gausswin(5)),'same');
 % set everything over 60 to 60
 speed(speed > 60) = 60;
 
-spdVec = [0:5:50 60]; spdVec(1) = -0.1;
+spdVec = [0:10:60]; spdVec(1) = -0.1;
 s = 0.5;
 [speedgrid,~] = spline_1d(speed,spdVec,s);
 
@@ -66,7 +66,7 @@ phase_ind = round(post*sampleRate);
 phase_ind(phase_ind + 1>numel(filt_eeg)) = [];
 theta_phase = phase(phase_ind+1); %gives phase of lfp at every time point
 
-bin_t = 15; s = 0.5;
+bin_t = 12; s = 0.5;
 thetaVec = linspace(0,2*pi,bin_t+1); thetaVec = thetaVec(1:end-1);
 thetagrid = spline_1d_circ(theta_phase,thetaVec,s);
 
@@ -110,6 +110,8 @@ param = parameters{end};
 %sort variables because the A matrix is in the 1-4 variable order
 variables = sort(variables);
 
+%% A is changed here
+orig_A = A; 
 if variables(1) == 1
     A{1} = [ones(length(spiketrain),1) A{1}];
 elseif variables(1) == 2
@@ -155,9 +157,12 @@ ForwardPval = pvals;
 ForwardFinal_Pval = final_pval;
 varAllModelFits = allModelFits;
 
-
-
-
+ctl_pts_all{1} = posVec;
+ctl_pts_all{2} = hdVec;
+ctl_pts_all{3} = spdVec;
+ctl_pts_all{4} = thetaVec;
+plotfig = 0; % this should be set to 0
+[tuning_curves] = plot_tuning(orig_A,variables,param,ctl_pts_all,s,plotfig,dt);
 
 
 return

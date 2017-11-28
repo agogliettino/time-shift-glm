@@ -86,7 +86,7 @@ if plotfig
     end
     
     subplot(1,5,4)
-    if ismember(1,variables)
+    if ismember(4,variables)
         scale_factor_ind = setdiff(variables,4); scale_factor = scale(scale_factor_ind);
         plot(theta_x,exp(theta_y)*exp(b0)*prod(exp(scale_factor))/dt,'k','linewidth',2);
         box off

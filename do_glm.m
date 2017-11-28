@@ -30,6 +30,16 @@ AllVar_TotalLLH_1 = cell(numCell,1);
 AllForwardPval = cell(numCell,1);
 AllForwardFinal_Pval = cell(numCell,1);
 AllvarAllmodelFits = cell(numCell,1);
+AmatAll = cell(numCell,1);
+Allposgrid = cell(numCell,1);
+Allhdgrid = cell(numCell,1);
+Allspeedgrid = cell(numCell,1);
+Allthetagrid = cell(numCell,1);
+AllposVec = cell(numCell,1);
+AllhdVec = cell(numCell,1);
+AllspdVec = cell(numCell,1);
+AllthetaVec = cell(numCell,1);
+tuning_curves_all = cell(numCell,1);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% do the for loop
@@ -45,7 +55,8 @@ for n = encodingCells'
     animalName = session_dir_split{end-2};
     
     % NOTE: this will have to be changed
-    prefix = 'G:\My Drive\All_Cells\';
+    %prefix = 'G:\My Drive\All_Cells\'; %this is for the lab machine (windows)
+    prefix = '/Volumes/GoogleDrive/My Drive/All_Cells/'; %from my machine (mac)
     
     %find pos file
     posfile = strcat(prefix,animalName,'_',session_dir_short,'_pos.mat');
@@ -59,8 +70,9 @@ for n = encodingCells'
 
     %%%%%%%%%%%%%%%%%%%%%%%% COLLECT PARAMETERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    [param, variables,VarShifts,P_ShiftVar,paramVar,VarTotal_LLH_1,ForwardPval,ForwardFinal_Pval,varAllModelFits] = create_glm(posfile,spikefile,filt_eeg,sampleRate,BoxSize{n});
+    [param, tuning_curves, variables,VarShifts,P_ShiftVar,paramVar,VarTotal_LLH_1,ForwardPval,ForwardFinal_Pval,varAllModelFits,A,posgrid,hdgrid,speedgrid,thetagrid,posVec,hdVec,spdVec,thetaVec] = create_glm(posfile,spikefile,filt_eeg,sampleRate,BoxSize{n});
     param_all{n} = param;
+    tuning_curves_all{n} = tuning_curves;
     variables_all{n} = variables;
     AllVarShifts{n} = VarShifts;
     AllPShifts{n} = P_ShiftVar;
@@ -71,8 +83,8 @@ for n = encodingCells'
     AllvarAllmodelFits{n} = varAllModelFits;
     
     toc
-    save('cellData_11_16_17Run.mat','param_all','variables_all','AllVarShifts','AllPShifts','AllParamVar','AllVar_TotalLLH_1','AllForwardFinal_Pval','AllvarAllmodelFits');
-        
+    save('do_glm_output.mat','param_all','variables_all','AllVarShifts','AllPShifts','AllParamVar','AllVar_TotalLLH_1','AllForwardFinal_Pval','AllvarAllmodelFits');
+     
         
     
 end

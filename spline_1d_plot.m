@@ -33,6 +33,6 @@ for i=1:length(x)
     
     % fill in the X matrix, with the right # of zeros on either side 
     row_vec = [zeros(1,nearest_c_pt_index-2) p zeros(1,num_c_pts-4-(nearest_c_pt_index-2))];
-    y(i) = row_vec*param;
+    y(i) = row_vec*param';
     
 end

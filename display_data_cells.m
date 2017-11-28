@@ -1,3 +1,4 @@
+clear all; %clear the workspace
 
 %% load data
 
@@ -5,8 +6,6 @@ load('cellData_11_16_17Run.mat'); %loads the data into the workspace - this cont
 
 %load the cells of interest
 load('encodingCells.mat');
-%get rid of the crappy cells
-encodingCells = encodingCells;
 
 %find the indices of the significant p values for every shift
 
@@ -19,9 +18,10 @@ SigAllVarShifts = AllVarShifts; %significant shifts
 
 for i = encodingCells' %for all of the cells
    for j = numel(AllPShifts{i}) %for all the elements in the returned p vals
-       if j > 0 %if there were any called shifts
+       if j > 0 %if there were any called shifts i e having more than zero elements
             if AllPShifts{i}{j} > .05 %if the p value is not significant
                 SigAllVarShifts{i}(j) = 0; %set the shift to zero
+                
             end
        end
    end
@@ -438,13 +438,149 @@ numOpPosHdSpd = numel(OpShiftPosHdSpd);
 
 %first, we will do position - here we will do the pooled models
 
-[pPosPooled] = myBinomTest(numel(find(posCells(:,2)<0)),numel(posCells(:,2)),.5,'one');
+[pPosPooled] = myBinomTest(numel(find(posCells(:,2)<0)),numel(posCells(:,2)~=0),.5,'two'); %to find what the P is if it is less than zero
 
-[pHDPooled] = myBinomTest(numel(find(hdCells(:,2)<0)),numel(hdCells(:,2)),.5,'one');
+[pHDPooled] = myBinomTest(numel(find(hdCells(:,2)<0)),numel(hdCells(:,2)~=0),.5,'two'); %if neg shift
 
-[pSpdPooled] = myBinomTest(numel(find(spdCells(:,2)>0)),numel(spdCells(:,2)),.5,'one');
+[pSpdPooled] = myBinomTest(numel(find(spdCells(:,2)<0)),numel(spdCells(:,2)~=0),.5,'two'); %if shift neg
+
+%% plot in 3d the shifts for the three variables
+
+noPos = setdiff(encodingCells,posCells(:,1));
+
+%concatenate a vector of zeros
+noPos = cat(2,noPos,zeros(length(noPos),1));
+
+%concatenate this into the posMod
+
+posCells = cat(1,posCells,noPos);
+
+%last, set this into a set order
+%find the index
+
+[~,sortPosIdx] = sort(posCells(:,1));
+
+%resort the whole array accordingly
+posCells = posCells(sortPosIdx,:);
 
 
+noHD = setdiff(encodingCells,hdCells(:,1));
+
+%vecotr of zeros
+noHD = cat(2,noHD,zeros(length(noHD),1));
+
+%put in the hdMod
+
+hdCells = cat(1,hdCells,noHD);
+
+%find idx for sort
+
+[~,sortHdIdx] = sort(hdCells(:,1));
+
+%resort the whole array
+hdCells = hdCells(sortHdIdx,:);
+
+
+%find diff
+noSpd = setdiff(encodingCells,spdCells(:,1));
+
+%add the zeros
+noSpd = cat(2,noSpd,zeros(length(noSpd),1));
+
+%add to the array
+spdCells = cat(1,spdCells,noSpd);
+
+%fidn sort idx
+
+[~,sortSpdIdx] = sort(spdCells(:,1));
+
+%sort the whole array
+
+spdCells = spdCells(sortSpdIdx,:);
+
+
+%% plot in 3d space
+
+%first add some jitter to the data points - we will do elementwise
+%mulitplication by a random number in the range of the max of each vector
+
+%first, the pos vector
+
+b = 1.5; %upper limit for random numbers to create noise
+a = 0.5; %lower limit for random numbers to create noise
+
+noisePos = (b-a).*rand(length(posCells),1) + a;
+
+%get jitters
+posCellsJit = posCells(:,2).*noisePos;
+
+%place cell naems in
+posCellsJit = cat(2,posCells(:,1),posCellsJit);
+
+%same procedure but with HD
+
+noiseHd = (b-a).*rand(length(hdCells),1) + a;
+
+%get jitter
+hdCellsJit = hdCells(:,2).*noiseHd;
+hdCellsJit = cat(2,hdCells(:,1),hdCellsJit);
+
+%last, spd cells
+
+noiseSpd = (b-a).*rand(length(spdCells),1) + a;
+
+%get jitters
+spdCellsJit = spdCells(:,2).*noiseSpd;
+spdCellsJit = cat(2,spdCells(:,1),spdCellsJit);
+
+   
+figure(19);
+scatter3(posCellsJit(:,2),hdCellsJit(:,2),spdCellsJit(:,2))
+
+%first, find the indices for all of the different models, within the
+%posCells, hdCells, and spdCells
+
+%next, posHd
+
+[~,posIntPH] = intersect(posCellsJit(:,1),posHdMod(:,1));
+[~,hdIntPH] = intersect(hdCellsJit(:,1),posHdMod(:,1));
+[~,spdIntPH] = intersect(spdCellsJit(:,1),posHdMod(:,1));
+
+%next, hdspd
+
+[~,posIntHS] = intersect(posCellsJit(:,1),hdSpdMod(:,1));
+[~,hdIntHS] = intersect(hdCellsJit(:,1),hdSpdMod(:,1));
+[~,spdIntHS] = intersect(spdCellsJit(:,1),hdSpdMod(:,1));
+
+%next, posSPd
+
+[~,posIntPS] = intersect(posCellsJit(:,1),posSpdMod(:,1));
+[~,hdIntPS] = intersect(hdCellsJit(:,1),posSpdMod(:,1));
+[~,spdIntPS] = intersect(spdCellsJit(:,1),posSpdMod(:,1));
+
+%last, full model
+
+[~,posIntPHS] = intersect(posCellsJit(:,1),posHdSpdMod(:,1));
+[~,hdIntPHS] = intersect(hdCellsJit(:,1),posHdSpdMod(:,1));
+[~,spdIntPHS] = intersect(spdCellsJit(:,1),posHdSpdMod(:,1));
+
+
+figure(20);
+scatter3(posCellsJit(posIntPH,2),hdCellsJit(hdIntPH,2),spdCellsJit(spdIntPH,2),'filled')
+hold on
+scatter3(posCellsJit(posIntHS,2),hdCellsJit(hdIntHS,2),spdCellsJit(spdIntHS,2),'filled')
+hold on
+scatter3(posCellsJit(posIntPS,2),hdCellsJit(hdIntPS,2),spdCellsJit(spdIntPS,2),'filled')
+hold on
+scatter3(posCellsJit(posIntPHS,2),hdCellsJit(hdIntPHS,2),spdCellsJit(spdIntPHS,2),'filled')
+legend('PH','HS','PS','PHS');
+xlabel('Shift in Design Matrix for Position');
+ylabel('Shift in Design Matrix for Head Direction');
+zlabel('Shift in Design Matrix for Running Speed');
+hold off
+
+
+    
 
 
 
