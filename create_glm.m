@@ -161,8 +161,9 @@ ctl_pts_all{1} = posVec;
 ctl_pts_all{2} = hdVec;
 ctl_pts_all{3} = spdVec;
 ctl_pts_all{4} = thetaVec;
-plotfig = 1; % this should be set to 0
+plotfig = 1; 
 [tuning_curves] = plot_tuning(orig_A,variables,param,ctl_pts_all,s,plotfig,dt);
 
+keyboard
 
 return

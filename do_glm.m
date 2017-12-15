@@ -44,7 +44,8 @@ tuning_curves_all = cell(numCell,1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% do the for loop
 encodingCells = encodingCells;
-for n = encodingCells'   
+%for n = encodingCells'  
+for n = 4
     tic
     %%%%%%%%%%%%%%%%%%%%%%%% LOAD ALL FILES%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %find directory
@@ -55,8 +56,8 @@ for n = encodingCells'
     animalName = session_dir_split{end-2};
     
     % NOTE: this will have to be changed
-    prefix = 'G:\My Drive\All_Cells\'; %this is for the lab machine (windows)
-   % prefix = '/Volumes/GoogleDrive/My Drive/All_Cells/'; %from my machine (mac)
+    %prefix = 'G:\My Drive\All_Cells\'; %this is for the lab machine (windows)
+    prefix = '/Volumes/GoogleDrive/My Drive/All_Cells/'; %from my machine (mac)
     
     %find pos file
     posfile = strcat(prefix,animalName,'_',session_dir_short,'_pos.mat');
@@ -82,8 +83,10 @@ for n = encodingCells'
     AllForwardFinal_Pval{n} = ForwardFinal_Pval;
     AllvarAllmodelFits{n} = varAllModelFits;
     
+    keyboard
+    
     toc
-    save('do_glm_output_112817.mat','param_all','variables_all','AllVarShifts','AllPShifts','AllParamVar','AllVar_TotalLLH_1','AllForwardFinal_Pval','AllvarAllmodelFits','tuning_curves_all');
+    %save('do_glm_output_112817.mat','param_all','variables_all','AllVarShifts','AllPShifts','AllParamVar','AllVar_TotalLLH_1','AllForwardFinal_Pval','AllvarAllmodelFits','tuning_curves_all');
      
         
     

@@ -49,12 +49,12 @@ while pval < 0.05 && numel(variables) < num_var
         end
         
         [testFit(:,m),trainFit(:,m),param_mean{m}] = fit_model_kfold(X,spiketrain,test_ind,train_ind);
-        
+        keyboard
     end
     
         % save all of the model fits
         allModelFits = [allModelFits mean(testFit)'];
-    
+        
         % choose the best model
         [~,topModel_ind] = max(mean(testFit));
         topModel = testFit(:,topModel_ind);

@@ -1,16 +1,46 @@
-clear all; %clear the workspace
 
-%% load data
 
-load('cellData_11_16_17Run.mat'); %loads the data into the workspace - this contains all of the cells
+%get rid of the non sig cells
+for i = encodingCells'
+    if AllForwardFinal_Pval{i} > .05
+        encodingCells(i) = 0;
+    end
+end
 
-%load the cells of interest
-load('encodingCells.mat');
+%set the non sig cells to zero
+
+encodingCells(encodingCells == 0) = [];
+
+
+
 
 %find the indices of the significant p values for every shift
 
 %preallocate for the significant p values and therefore shifts in the
 %matrix
+
+%figure out which cells even had a sig model
+
+
+
+% pCell = [];
+% hCell = [];
+% sCell = [];
+% for i = encodingCells'
+%    if ismember(1,variables_all{i}) && AllForwardFinal_Pval{i} < .05
+%         pCell(end+1) = i;
+%    end
+%    if ismember(2,variables_all{i}) && AllForwardFinal_Pval{i} < .05
+%         hCell(end+1) = i;
+%    end
+%    if ismember(3,variables_all{i}) && AllForwardFinal_Pval{i} < .05
+%         sCell(end+1) = i;
+%    end
+% end
+% %         pCell{i,2} = AllVarShifts{i}(1);
+% %     end
+% % end
+% pCell = cell2mat(pCell);
 
 %% Find the significant shifts for each cell
 
@@ -58,28 +88,43 @@ spdCells = cell(numel(encodingCells),2);
 %place the cell name and appropriate shift into the array
 
 for f = 1:numel(encodingCells) %for all the number of cells
-    for l = 1:numel(variables_allFilt{f,2}) %for all the elements in each variable cell
-        if variables_allFilt{f,2}(l) == 1 %if it is Pos
-            posCells{f,1} = SigAllVarShiftsFilt{f,1}; %put the cell name in the array
-            posCells{f,2} = SigAllVarShiftsFilt{f,2}(l); %put the relevent shift in the array
-        elseif variables_allFilt{f,2}(l) == 2 %if it is HD
-            hdCells{f,1} = SigAllVarShiftsFilt{f,1}; %put the cell name into the array
-            hdCells{f,2} = SigAllVarShiftsFilt{f,2}(l); %place relevant shifts in array
-        elseif variables_allFilt{f,2}(l) == 3 %if it is Spd
-            spdCells{f,1} = SigAllVarShiftsFilt{f,1}; %putt the cell name into array
-            spdCells{f,2} = SigAllVarShiftsFilt{f,2}(l); %put the shift in array
+    if ismember(1,variables_all{encodingCells(f)}) %if it is Pos
+        posCells{f,1} = encodingCells(f); %put the cell name in the array
+        if AllPShifts{f}{1} < .05
+           posCells{f,2} = AllVarShifts{encodingCells(f)}(1); %put the relevent shift in the array
         end
     end
+    if ismember(2,variables_all{encodingCells(f)}) %if it is HD
+        hdCells{f,1} = encodingCells(f); %put the cell name into the array
+        if ismember(1,variables_all{encodingCells(f)})
+            hdCells{f,2} = AllVarShifts{encodingCells(f)}(2); %place relevant shifts in array
+        else
+            hdCells{f,2} = AllVarShifts{encodingCells(f)}(1);
+        end
+    end
+    if ismember(3,variables_all{encodingCells(f)}) %if it is Spd
+        spdCells{f,1} = encodingCells(f); %putt the cell name into array
+        if ismember(1,variables_all{encodingCells(f)}) && ismember(2,variables_all{encodingCells(f)})
+           spdCells{f,2} = AllVarShifts{encodingCells(f)}(3); %put the shift in array
+        elseif ismember(1,variables_all{encodingCells(f)}) || ismember(2,variables_all{encodingCells(f)})
+           spdCells{f,2} = AllVarShifts{encodingCells(f)}(2);
+        end
+    end
+    
 end
 
 %% Convert to matrix from cell array
 
-posCells = cell2mat(posCells);
-hdCells = cell2mat(hdCells);
-spdCells = cell2mat(spdCells);
+posCellsEnc = cell2mat(posCells);
+hdCellsEnc = cell2mat(hdCells);
+spdCellsEnc = cell2mat(spdCells);
 
-%% plot these data
-
+posCells = posCellsEnc;
+hdCells = hdCellsEnc;
+spdCells = spdCellsEnc;
+% 
+% %% plot these data
+% 
 figure(1);
 bar(posCells(:,1),posCells(:,2),'FaceColor','k');
 hold on
@@ -116,7 +161,7 @@ for i = 1:numel(encodingCells)
             SigAllVarShiftsFilt{i,2}(j) = []; %gets rid of the theta shift, because we also don't want it
         end
     end
-    if numel(variables_allFilt{i,2}) == 1 %if there is one variable in the model, do the next line
+    if numel(variables_allFilt{i,2}) == 1 && AllForwardFinal_Pval{encodingCells(i)} <.05 %if there is one variable in the model, do the next line
         if variables_allFilt{i,2} == 1
             posMod{i,1} = variables_allFilt{i,1};
             posMod{i,2} = SigAllVarShiftsFilt{i,2};
@@ -127,7 +172,7 @@ for i = 1:numel(encodingCells)
             spdMod{i,1} = variables_allFilt{i,1};
             spdMod{i,2} = SigAllVarShiftsFilt{i,2};
         end
-    elseif numel(variables_allFilt{i,2}) == 2 %if there are two variables in the model, run these lines
+    elseif numel(variables_allFilt{i,2}) == 2 && AllForwardFinal_Pval{encodingCells(i)} <.05%if there are two variables in the model, run these lines
         if variables_allFilt{i,2} == ph
             posHdMod{i,1} = variables_allFilt{i,1};
             posHdMod{i,2} = SigAllVarShiftsFilt{i,2};
@@ -138,7 +183,7 @@ for i = 1:numel(encodingCells)
             posSpdMod{i,1} = variables_allFilt{i,1};
             posSpdMod{i,2} = SigAllVarShiftsFilt{i,2};
         end
-    elseif numel(variables_allFilt{i,2}) == 3 %if there are three variables in the model, run these
+    elseif numel(variables_allFilt{i,2}) == 3 && AllForwardFinal_Pval{encodingCells(i)} <.05%if there are three variables in the model, run these
         if variables_allFilt{i,2} == phs 
             posHdSpdMod{i,1} = variables_allFilt{i,1};
             posHdSpdMod{i,2} = SigAllVarShiftsFilt{i,2};
@@ -620,9 +665,39 @@ xlabel('hd shift')
 ylabel('speed shift')
 legend('HD','Spd');
 
-%% plot the tuning curves
+%% get summary numbers for these data
 
-%first, recreate the design matrix
+%first, just the total number of cells which shift for each variable
+
+numCellPosShift = numel(find(posCellsEnc(:,2)~=0));
+
+%hd
+
+numCellHdShift = numel(find(hdCellsEnc(:,2)~=0));
+
+%spd
+
+numCellSpdShift = numel(find(spdCellsEnc(:,2)~=0));
+
+%now, find out the relative direction of the shifts - maybe, express this
+%as a probability of shifting neg or pos for each variable
+
+%gather all pos cells
+
+posModAll = cat(1,posMod(:,1:2),posHdMod(:,1:2),posHdSpdMod(:,1:2));
+
+
+
+
+
+
+% how many cells shift, which variables are most likely to shift (of all the cells which encode pos, how many have position shifted, which direction?), and whats
+% the breakdown of shifting for forward versus backwards
+
+%grid cells - are grid cells more likely to shift than non grid 
+
+%finally, the plots for different cells and the shifts
+
 
 
 
